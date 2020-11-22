@@ -1,0 +1,15 @@
+https://storage.googleapis.com/covid19-open-data/v2/main.csv
+https://storage.googleapis.com/covid19-open-data/v2/index.csv
+https://storage.googleapis.com/covid19-open-data/v2/demographics.csv
+https://storage.googleapis.com/covid19-open-data/v2/economy.csv
+https://storage.googleapis.com/covid19-open-data/v2/epidemiology.csv
+https://storage.googleapis.com/covid19-open-data/v2/lawatlas-emergency-declarations.csv
+https://storage.googleapis.com/covid19-open-data/v2/geography.csv
+https://storage.googleapis.com/covid19-open-data/v2/health.csv
+https://storage.googleapis.com/covid19-open-data/v2/hospitalizations.csv
+https://storage.googleapis.com/covid19-open-data/v2/mobility.csv
+https://storage.googleapis.com/covid19-open-data/v2/search-trends-daily.csv
+https://storage.googleapis.com/covid19-open-data/v2/oxford-government-response.csv
+https://storage.googleapis.com/covid19-open-data/v2/worldbank.csv
+https://storage.googleapis.com/covid19-open-data/v2/by-age.csv
+https://storage.googleapis.com/covid19-open-data/v2/by-sex.csv
