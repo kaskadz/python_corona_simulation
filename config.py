@@ -13,6 +13,7 @@ class Configuration():
         #simulation variables
         self.print_summary = kwargs.get('print_sum', True)
         self.verbose = kwargs.get('verbose', True) #whether to print infections, recoveries and fatalities to the terminal
+        self.quiet = kwargs.get('quiet', False)
         self.simulation_steps = kwargs.get('simulation_steps', 10000) #total simulation steps performed
         self.tstep = kwargs.get('tstep', 0) #current simulation timestep
         self.save_data = kwargs.get('save_data', False) #whether to dump data at end of simulation
@@ -52,6 +53,7 @@ class Configuration():
         self.pop_size = kwargs.get('pop_size', 500)
         self.mean_age = kwargs.get('mean_age', 45)
         self.max_age = kwargs.get('max_age', 105)
+        self.std_age = kwargs.get('std_age', (self.max_age - self.mean_age) / 3)
         self.custom_age_distribution = kwargs.get('custom_age_distribution', False)
         self.age_dependent_risk = kwargs.get('age_dependent_risk', True) #whether risk increases with age
         self.risk_age = kwargs.get('risk_age', 55) #age where mortality risk starts increasing
