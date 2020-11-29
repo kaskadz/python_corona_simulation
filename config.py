@@ -11,6 +11,7 @@ class config_error(Exception):
 class Configuration():
     def __init__(self, *args, **kwargs):
         #simulation variables
+        self.print_summary = kwargs.get('print_sum', True)
         self.verbose = kwargs.get('verbose', True) #whether to print infections, recoveries and fatalities to the terminal
         self.simulation_steps = kwargs.get('simulation_steps', 10000) #total simulation steps performed
         self.tstep = kwargs.get('tstep', 0) #current simulation timestep
@@ -51,6 +52,7 @@ class Configuration():
         self.pop_size = kwargs.get('pop_size', 2000)
         self.mean_age = kwargs.get('mean_age', 45)
         self.max_age = kwargs.get('max_age', 105)
+        self.custom_age_distribution = kwargs.get('custom_age_distribution', False)
         self.age_dependent_risk = kwargs.get('age_dependent_risk', True) #whether risk increases with age
         self.risk_age = kwargs.get('risk_age', 55) #age where mortality risk starts increasing
         self.critical_age = kwargs.get('critical_age', 75) #age at and beyond which mortality risk reaches maximum

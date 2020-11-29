@@ -10,10 +10,11 @@ import numpy as np
 
 from motion import get_motion_parameters
 from utils import check_folder
+from config import Configuration
 
 from custom import get_random_ages
 
-def initialize_population(Config,
+def initialize_population(Config: Configuration,
                           xbounds=[0, 1], ybounds=[0, 1]):
     '''initialized the population for the simulation
 
@@ -71,7 +72,13 @@ def initialize_population(Config,
     population[:,5] = np.random.normal(Config.speed, Config.speed / 3)
 
     #initalize ages
-    population[:,7] = np.int32(get_random_ages(Config.pop_size))
+    if Config.custom_age_distribution:
+        population[:,7] = np.int32(get_random_ages(Config.pop_size))
+    else:
+        population[:,7] = np.int32(np.random.normal(loc = Config.mean_age,
+                                                scale = Config.std_age,
+                                                size=(Config.pop_size,)))
+        population[:,7] = np.clip(population[:,7], a_min = 0, a_max = Config.max_age) #clip those younger than 0 years
 
     #build recovery_vector
     population[:,9] = np.random.normal(loc = 0.5, scale = 0.5 / 3, size=(Config.pop_size,))
