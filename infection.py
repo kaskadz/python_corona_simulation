@@ -132,7 +132,7 @@ def infect(population, Config, frame, send_to_location=False,
 
             for idx in indices:
                 #roll die to see if healthy person will be infected
-                if np.random.random() < infection_chance * severity_infection_chance_multiplier(patient[15]):
+                if np.random.random() < infection_chance * severity_infection_chance_multiplier(Config.severity_infection_chances, patient[15]):
                     population[idx][6] = 1
                     population[idx][15] = severity = choose_severity(population[idx][7], Config.age_dependent_risk)
                     population[idx][8] = frame
@@ -176,7 +176,7 @@ def infect(population, Config, frame, send_to_location=False,
                                          infected_previous_step = infected_previous_step)
                 
                 if len(infected) > 0:
-                    if np.random.random() < (infection_chance * sum(severity_infection_chance_multiplier(population[np.int32(infected),15]))):
+                    if np.random.random() < (infection_chance * sum(severity_infection_chance_multiplier(Config.severity_infection_chances, population[np.int32(infected),15]))):
                         #roll die to see if healthy person will be infected
                         population[np.int32(person[0])][6] = 1
                         population[np.int32(person[0])][15] = severity = choose_severity(person[7], Config.age_dependent_risk)
@@ -212,8 +212,8 @@ def get_infection_range_and_chance(Config):
     return (infection_range, infection_chance)
 
 
-def severity_infection_chance_multiplier(severity):
-    return np.array([0.5, 1, 2])[np.int32(severity)]
+def severity_infection_chance_multiplier(severity_infection_chances, severity):
+    return np.array(severity_infection_chances)[np.int32(severity)]
 
 def choose_severity(age, age_dependent_risk):
     # todo use real data

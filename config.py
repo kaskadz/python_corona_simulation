@@ -54,7 +54,7 @@ class Configuration():
         self.age_dependent_risk = kwargs.get('age_dependent_risk', True) #whether risk increases with age
         self.risk_age = kwargs.get('risk_age', 55) #age where mortality risk starts increasing
         self.critical_age = kwargs.get('critical_age', 75) #age at and beyond which mortality risk reaches maximum
-        self.critical_mortality_chance = kwargs.get('critical_mortality_chance', 0.3) #maximum mortality risk for older age
+        self.critical_mortality_chance = kwargs.get('critical_mortality_chance', 0.5) #maximum mortality risk for older age
         self.risk_increase = kwargs.get('risk_increase', 'quadratic') #whether risk between risk and critical age increases 'linear' or 'quadratic'
         
         #movement variables
@@ -75,9 +75,10 @@ class Configuration():
         self.infection_chance = kwargs.get('infection_chance', 0.06) #chance that an infection spreads to nearby healthy people each tick
         self.infection_range_with_mask = kwargs.get('infection_range_with_mask', 0.01)
         self.infection_chance_with_mask = kwargs.get('infection_chance_with_mask', 0.03)
-        self.proportion_wearing_masks = kwargs.get('proportion_wearing_masks', 0.1) # proportion of people wearing masks
+        self.proportion_wearing_masks = kwargs.get('proportion_wearing_masks', 0.8) # proportion of people wearing masks
         self.recovery_duration = kwargs.get('recovery_duration', (200, 500)) #how many ticks it may take to recover from the illness
-        self.mortality_chance = kwargs.get('mortality_chance', 0.3) #global baseline chance of dying from the disease (if symptoms are severe)
+        self.mortality_chance = kwargs.get('mortality_chance', 0.5) #global baseline chance of dying from the disease (if symptoms are severe)
+        self.severity_infection_chances = kwargs.get('severity_infection_chances', [0.5, 1, 2])
 
         #healthcare variables
         self.healthcare_capacity = kwargs.get('healthcare_capacity', 50) #capacity of the healthcare system
