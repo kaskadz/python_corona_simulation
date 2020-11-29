@@ -133,12 +133,13 @@ class Simulation():
             draw_tstep(self.Config, self.population, self.pop_tracker, self.frame, 
                        self.fig, self.spec, self.ax1, self.ax2)
 
-        #report stuff to console
-        sys.stdout.write('\r')
-        sys.stdout.write('%i: healthy: %i, infected: %i, immune: %i, in treatment: %i, \
-dead: %i, of total: %i' %(self.frame, self.pop_tracker.susceptible[-1], self.pop_tracker.infectious[-1],
-                        self.pop_tracker.recovered[-1], len(self.population[self.population[:,10] == 1]),
-                        self.pop_tracker.fatalities[-1], self.Config.pop_size))
+        if not self.Config.quiet:
+            #report stuff to console
+            sys.stdout.write('\r')
+            sys.stdout.write('%i: healthy: %i, infected: %i, immune: %i, in treatment: %i, \
+    dead: %i, of total: %i' %(self.frame, self.pop_tracker.susceptible[-1], self.pop_tracker.infectious[-1],
+                            self.pop_tracker.recovered[-1], len(self.population[self.population[:,10] == 1]),
+                            self.pop_tracker.fatalities[-1], self.Config.pop_size))
 
         #save popdata if required
         if self.Config.save_pop and (self.frame % self.Config.save_pop_freq) == 0:
@@ -158,7 +159,8 @@ dead: %i, of total: %i' %(self.frame, self.pop_tracker.susceptible[-1], self.pop
         '''
 
         if self.frame == 50:
-            print('\ninfecting patient zero')
+            if not self.Config.quiet:
+                print('\ninfecting patient zero')
             self.population[0][6] = 1
             self.population[0][8] = 50
             self.population[0][10] = 1
