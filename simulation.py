@@ -33,7 +33,7 @@ class Simulation():
         self.pop_tracker = Population_trackers()
 
         #initalise destinations vector
-        self.destinations = initialize_destination_matrix(self.Config.pop_size, 1)        
+        self.destinations = initialize_destination_matrix(self.Config.pop_size, 1)
 
 
     def reinitialise(self):
@@ -188,16 +188,32 @@ dead: %i, of total: %i' %(self.frame, self.pop_tracker.susceptible[-1], self.pop
         if self.Config.save_data:
             save_data(self.population, self.pop_tracker)
 
-        #report outcomes
-        print('\n-----stopping-----\n')
-        print('total timesteps taken: %i' %self.frame)
-        print('total dead: %i' %len(self.population[self.population[:,6] == 3]))
-        print('total recovered: %i' %len(self.population[self.population[:,6] == 2]))
-        print('total infected: %i' %len(self.population[self.population[:,6] == 1]))
-        print('total infectious: %i' %len(self.population[(self.population[:,6] == 1) |
-                                                          (self.population[:,6] == 4)]))
-        print('total unaffected: %i' %len(self.population[self.population[:,6] == 0]))
-        
+        total_timesteps = self.frame
+        total_dead = len(self.population[self.population[:,6] == 3])
+        total_recovered = len(self.population[self.population[:,6] == 2])
+        total_infected = len(self.population[self.population[:,6] == 1])
+        total_infectious = len(self.population[(self.population[:,6] == 1) | (self.population[:,6] == 4)])
+        total_unaffected = len(self.population[self.population[:,6] == 0])
+
+        if (self.Config.print_summary):
+            #report outcomes
+            print('\n-----stopping-----\n')
+            print('total timesteps taken: %i' % total_timesteps)
+            print('total dead: %i' % total_dead)
+            print('total recovered: %i' % total_recovered)
+            print('total infected: %i' % total_infected)
+            print('total infectious: %i' % total_infectious)
+            print('total unaffected: %i' % total_unaffected)
+        else:
+            return {
+                'timesteps': total_timesteps,
+                'dead': total_dead,
+                'recovered': total_recovered,
+                'infected': total_infected,
+                'infectious': total_infectious,
+                'unaffected': total_unaffected
+            }
+
 
     def plot_sir(self, size=(6,3), include_fatalities=False, 
                  title='S-I-R plot of simulation'):
