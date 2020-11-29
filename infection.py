@@ -119,9 +119,10 @@ def infect(population, Config, frame, send_to_location=False,
     #if less than half are infected, slice based on infected (to speed up computation)
     if len(infected_previous_step) < (Config.pop_size // 2):
         for patient in infected_previous_step:
+            infection_range, infection_chance = get_infection_range_and_chance(Config)
             #define infection zone for patient
-            infection_zone = [patient[1] - Config.infection_range, patient[2] - Config.infection_range,
-                                patient[1] + Config.infection_range, patient[2] + Config.infection_range]
+            infection_zone = [patient[1] - infection_range, patient[2] - infection_range,
+                                patient[1] + infection_range, patient[2] + infection_range]
 
             #find healthy people surrounding infected patient
             if Config.traveling_infects or patient[11] == 0:
@@ -131,7 +132,7 @@ def infect(population, Config, frame, send_to_location=False,
 
             for idx in indices:
                 #roll die to see if healthy person will be infected
-                if np.random.random() < Config.infection_chance * severity_infection_chance_multiplier(patient[15]):
+                if np.random.random() < infection_chance * severity_infection_chance_multiplier(patient[15]):
                     population[idx][6] = 1
                     population[idx][15] = choose_severity(population[idx][7], Config.age_dependent_risk)
                     population[idx][8] = frame
@@ -154,9 +155,10 @@ def infect(population, Config, frame, send_to_location=False,
         
         
         for person in healthy_previous_step:
+            infection_range, infection_chance = get_infection_range_and_chance(Config)
             #define infecftion range around healthy person
-            infection_zone = [person[1] - Config.infection_range, person[2] - Config.infection_range,
-                                person[1] + Config.infection_range, person[2] + Config.infection_range]
+            infection_zone = [person[1] - infection_range, person[2] - infection_range,
+                                person[1] + infection_range, person[2] + infection_range]
 
             if person[6] == 0: #if person is not already infected, find if infected are nearby
                 #find infected nearby healthy person
@@ -171,7 +173,7 @@ def infect(population, Config, frame, send_to_location=False,
                                          infected_previous_step = infected_previous_step)
                 
                 if len(infected) > 0:
-                    if np.random.random() < (Config.infection_chance * sum(severity_infection_chance_multiplier(population[np.int32(infected),15]))):
+                    if np.random.random() < (infection_chance * sum(severity_infection_chance_multiplier(population[np.int32(infected),15]))):
                         #roll die to see if healthy person will be infected
                         population[np.int32(person[0])][6] = 1
                         population[np.int32(person[0])][15] = choose_severity(person[7], Config.age_dependent_risk)
@@ -198,6 +200,13 @@ def infect(population, Config, frame, send_to_location=False,
         return population
     else:
         return population, destinations
+
+def get_infection_range_and_chance(Config):
+    is_wearing_mask = np.random.random() < Config.proportion_wearing_masks
+    infection_range = Config.infection_range_with_mask if is_wearing_mask else Config.infection_range
+    infection_chance = Config.infection_range_with_mask if is_wearing_mask else Config.infection_chance_with_mask
+    return (infection_range, infection_chance)
+
 
 def severity_infection_chance_multiplier(severity):
     return np.array([0.5, 1, 2])[np.int32(severity)]
