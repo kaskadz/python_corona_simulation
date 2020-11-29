@@ -134,14 +134,17 @@ def infect(population, Config, frame, send_to_location=False,
                 #roll die to see if healthy person will be infected
                 if np.random.random() < infection_chance * severity_infection_chance_multiplier(patient[15]):
                     population[idx][6] = 1
-                    population[idx][15] = choose_severity(population[idx][7], Config.age_dependent_risk)
+                    population[idx][15] = severity = choose_severity(population[idx][7], Config.age_dependent_risk)
                     population[idx][8] = frame
-                    if population[idx][15] == 2 and len(population[population[:,10] == 1]) <= Config.healthcare_capacity:
+                    # send to treatment only severe cases
+                    if severity == 2 and len(population[population[:,10] == 1]) <= Config.healthcare_capacity:
                         population[idx][10] = 1
-                    #send to isolation only those with mild and severe symptoms
-                    if population[idx][15] > 0 and send_to_location:
+                        
+                    tested = np.random.random() < Config.test_chances[severity]
+                    self_isolate_severity_proportion = Config.self_isolate_severity_proportion[severity]
+                    if send_to_location:
                         #send to location if die roll is positive
-                        if np.random.uniform() <= location_odds:
+                        if np.random.uniform() <= (tested + self_isolate_severity_proportion) * location_odds:
                             population[idx],\
                             destinations[idx] = go_to_location(population[idx],
                                                                destinations[idx],
@@ -176,14 +179,15 @@ def infect(population, Config, frame, send_to_location=False,
                     if np.random.random() < (infection_chance * sum(severity_infection_chance_multiplier(population[np.int32(infected),15]))):
                         #roll die to see if healthy person will be infected
                         population[np.int32(person[0])][6] = 1
-                        population[np.int32(person[0])][15] = choose_severity(person[7], Config.age_dependent_risk)
+                        population[np.int32(person[0])][15] = severity = choose_severity(person[7], Config.age_dependent_risk)
                         population[np.int32(person[0])][8] = frame
-                        if person[15] == 2 and len(population[population[:,10] == 1]) <= Config.healthcare_capacity:
+                        if severity == 2 and len(population[population[:,10] == 1]) <= Config.healthcare_capacity:
                             population[np.int32(person[0])][10] = 1
-                        #send to isolation only those with mild and severe symptoms
-                        if person[15] > 0 and send_to_location:
+                        tested = np.random.random() < Config.test_chances[severity]
+                        self_isolate_severity_proportion = Config.self_isolate_severity_proportion[severity]
+                        if send_to_location:
                             #send to location if die roll is positive
-                            if np.random.uniform() < location_odds:
+                            if np.random.uniform() <= (tested + self_isolate_severity_proportion) * location_odds:
                                 population[np.int32(person[0])],\
                                 destinations[np.int32(person[0])] = go_to_location(population[np.int32(person[0])],
                                                                                     destinations[np.int32(person[0])],
@@ -204,7 +208,7 @@ def infect(population, Config, frame, send_to_location=False,
 def get_infection_range_and_chance(Config):
     is_wearing_mask = np.random.random() < Config.proportion_wearing_masks
     infection_range = Config.infection_range_with_mask if is_wearing_mask else Config.infection_range
-    infection_chance = Config.infection_range_with_mask if is_wearing_mask else Config.infection_chance_with_mask
+    infection_chance = Config.infection_chance_with_mask if is_wearing_mask else Config.infection_chance
     return (infection_range, infection_chance)
 
 
@@ -223,7 +227,7 @@ def choose_severity(age, age_dependent_risk):
     elif age < 75:
         return np.random.choice(severities, p=[0.1, 0.6, 0.3])
     else:
-        return np.random.choice(severities, p=[0, 0.5, 0.5])
+        return np.random.choice(severities, p=[0, 0.4, 0.6])
 
 def recover_or_die(population, frame, Config):
     '''see whether to recover or die
