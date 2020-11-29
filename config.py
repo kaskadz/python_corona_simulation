@@ -19,12 +19,12 @@ class Configuration():
         self.save_pop_freq = kwargs.get('save_pop_freq', 10) #population data will be saved every 'n' timesteps. Default: 10
         self.save_pop_folder = kwargs.get('save_pop_folder', 'pop_data/') #folder to write population timestep data to
         self.endif_no_infections = kwargs.get('endif_no_infections', True) #whether to stop simulation if no infections remain
-        self.world_size = kwargs.get('world_size', [2, 2]) #x and y sizes of the world
+        self.world_size = kwargs.get('world_size', [1, 1]) #x and y sizes of the world
 
 
         #scenario flags
         self.traveling_infects = kwargs.get('traveling_infects', False)
-        self.self_isolate = kwargs.get('self_isolate', False)
+        self.self_isolate = kwargs.get('self_isolate', True)
         self.lockdown = kwargs.get('lockdown', False)
         self.lockdown_percentage = kwargs.get('lockdown_percentage', 0.1) #after this proportion is infected, lock-down begins
         self.lockdown_compliance = kwargs.get('lockdown_compliance', 0.95) #fraction of the population that will obey the lockdown        
@@ -48,13 +48,13 @@ class Configuration():
         self.ybounds = kwargs.get('ybounds', [self.y_plot[0] + 0.02, self.y_plot[1] - 0.02])    
     
         #population variables
-        self.pop_size = kwargs.get('pop_size', 2000)
+        self.pop_size = kwargs.get('pop_size', 500)
         self.mean_age = kwargs.get('mean_age', 45)
         self.max_age = kwargs.get('max_age', 105)
         self.age_dependent_risk = kwargs.get('age_dependent_risk', True) #whether risk increases with age
         self.risk_age = kwargs.get('risk_age', 55) #age where mortality risk starts increasing
         self.critical_age = kwargs.get('critical_age', 75) #age at and beyond which mortality risk reaches maximum
-        self.critical_mortality_chance = kwargs.get('critical_mortality_chance', 0.1) #maximum mortality risk for older age
+        self.critical_mortality_chance = kwargs.get('critical_mortality_chance', 0.5) #maximum mortality risk for older age
         self.risk_increase = kwargs.get('risk_increase', 'quadratic') #whether risk between risk and critical age increases 'linear' or 'quadratic'
         
         #movement variables
@@ -71,26 +71,33 @@ class Configuration():
         self.wander_factor_dest = kwargs.get('wander_factor_dest', 1.5) #area around destination
 
         #infection variables
-        self.infection_range = kwargs.get('infection_range', 0.01) #range surrounding sick patient that infections can take place
-        self.infection_chance = kwargs.get('infection_chance', 0.03)   #chance that an infection spreads to nearby healthy people each tick
+        self.infection_range = kwargs.get('infection_range', 0.02) #range surrounding sick patient that infections can take place
+        self.infection_chance = kwargs.get('infection_chance', 0.06) #chance that an infection spreads to nearby healthy people each tick
+        self.infection_range_with_mask = kwargs.get('infection_range_with_mask', 0.01)
+        self.infection_chance_with_mask = kwargs.get('infection_chance_with_mask', 0.03)
+        self.proportion_wearing_masks = kwargs.get('proportion_wearing_masks', 0.8) # proportion of people wearing masks
         self.recovery_duration = kwargs.get('recovery_duration', (200, 500)) #how many ticks it may take to recover from the illness
-        self.mortality_chance = kwargs.get('mortality_chance', 0.1) #global baseline chance of dying from the disease (if symptoms are severe)
+        self.mortality_chance = kwargs.get('mortality_chance', 0.5) #global baseline chance of dying from the disease (if symptoms are severe)
+        self.severity_infection_chances = kwargs.get('severity_infection_chances', [0.5, 1, 2])
 
         #healthcare variables
-        self.healthcare_capacity = kwargs.get('healthcare_capacity', 300) #capacity of the healthcare system
+        self.healthcare_capacity = kwargs.get('healthcare_capacity', 50) #capacity of the healthcare system
         self.treatment_factor = kwargs.get('treatment_factor', 0.5) #when in treatment, affect risk by this factor
         self.no_treatment_factor = kwargs.get('no_treatment_factor', 3) #risk increase factor to use if healthcare system is full
         #risk parameters
         self.treatment_dependent_risk = kwargs.get('treatment_dependent_risk', True) #whether risk is affected by treatment
 
         #self isolation variables
-        self.self_isolate_proportion = kwargs.get('self_isolate_proportion', 0.6)
+        self.self_isolate_proportion = kwargs.get('self_isolate_proportion', 0.6) # proportion of infected who will self-isolate
         self.isolation_bounds = kwargs.get('isolation_bounds', [0.02, 0.02, 0.1, 0.98])
+        self.self_isolate_severity_proportion = kwargs.get('self_isolate_severity_proportion', [0.0, 0.2, 0.5]) # proprtions of infected who will self-isolate based on severity of symptoms, even without test
         
         #lockdown variables
         self.lockdown_percentage = kwargs.get('lockdown_percentage', 0.1) 
         self.lockdown_vector = kwargs.get('lockdown_vector', [])
-        
+
+        #testing variables
+        self.test_chances = kwargs.get('test_chances', [0.2, 0.4, 0.95])
         
     def get_palette(self):
         '''returns appropriate color palette
