@@ -5,6 +5,8 @@ from simulation import Simulation
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+import sys
+import argparse
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -31,38 +33,50 @@ problem = {
   'bounds': [[x[1], x[2]] for x in variables]
 }
 
+def get_prefixed_filename(prefix, filename):
+    return filename if prefix is None else f'{prefix}_{filename}'
+
 
 if __name__ == '__main__':
-    print('Generating parameter sets')
-    param_values = saltelli.sample(problem, 10, calc_second_order=False)
+    parser = argparse.ArgumentParser(description='Computes parameter sensitivity')
+    parser.add_argument('step', type=str, nargs='?', default='all', choices=['sim', 'sen', 'all'], help='Step name (sim - run simulations, sen - compute sensitivity)')
+    parser.add_argument('-n', '--name', type=str, nargs=1, help='Analysis name')
 
-    inputs = [dict(zip(labels, v)) for v in param_values]
+    params = parser.parse_args()
 
-    results = []
-    for i in tqdm(iterable=inputs, unit='simulation', desc='Running simulations'):
-        sim = Simulation(kwargs=i)
+    if params.step in ['all', 'sim']:
+        print('Generating parameter sets')
+        param_values = saltelli.sample(problem, 10, calc_second_order=False)
 
-        sim.Config.quiet = True
-        sim.Config.visualise = False
-        sim.Config.verbose = False
-        sim.Config.simulation_steps = 500
-        sim.Config.print_summary = False
+        inputs = [dict(zip(labels, v)) for v in param_values]
 
-        result = sim.run()
-        result_dict = {f'r_{k}': v for k, v in result.items()}
-        param_dict = {f'p_{k}': v for k, v in i.items()}
+        results = []
+        for i in tqdm(iterable=inputs, unit='simulation', desc='Running simulations'):
+            sim = Simulation(kwargs=i)
 
-        results.append({**param_dict, **result_dict})
+            sim.Config.quiet = True
+            sim.Config.visualise = False
+            sim.Config.verbose = False
+            sim.Config.simulation_steps = 500
+            sim.Config.print_summary = False
 
-    df = pd.DataFrame(data = results)
-    print('Saving simulations results')
-    df.to_csv('results.csv', index=False)
+            result = sim.run()
+            result_dict = {f'r_{k}': v for k, v in result.items()}
+            param_dict = {f'p_{k}': v for k, v in i.items()}
 
-    df = pd.read_csv('results.csv')
-    for rv in tqdm(iterable=result_variables, unit='variable', desc='Computing sensitivity'):
-        Y = df[f'r_{rv}'].values
-        Si = sobol.analyze(problem, Y, calc_second_order=False)
-        sdf = pd.concat(Si.to_df(), axis=1)
-        sdf.index.name = 'parameter'
-        sdf.to_csv(f'{rv}_results.csv')
+            results.append({**param_dict, **result_dict})
+
+        df = pd.DataFrame(data = results)
+        print('Saving simulations results')
+        df.to_csv(get_prefixed_filename(params.name, 'results.csv'), index=False)
+
+    if params.step in ['all', 'sen']:
+        df = pd.read_csv(get_prefixed_filename(params.name, 'results.csv'))
+        for rv in tqdm(iterable=result_variables, unit='variable', desc='Computing sensitivity'):
+            Y = df[f'r_{rv}'].values
+            Si = sobol.analyze(problem, Y, calc_second_order=False)
+            sdf = pd.concat(Si.to_df(), axis=1)
+            sdf.index.name = 'parameter'
+            sdf.to_csv(get_prefixed_filename(params.name, f'{rv}_results.csv'))
+
     print('Done')
