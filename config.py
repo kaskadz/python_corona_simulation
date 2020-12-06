@@ -7,7 +7,6 @@ import numpy as np
 class config_error(Exception):
     pass
 
-
 class Configuration():
     def __init__(self, *args, **kwargs):
         #simulation variables
@@ -99,6 +98,11 @@ class Configuration():
         #lockdown variables
         self.lockdown_percentage = kwargs.get('lockdown_percentage', 0.1) 
         self.lockdown_vector = kwargs.get('lockdown_vector', [])
+        if self.lockdown:
+            self.set_lockdown(
+                lockdown_percentage=self.lockdown_percentage,
+                lockdown_compliance=self.lockdown_compliance
+            )
 
         #testing variables
         self.test_chances = kwargs.get('test_chances', [0.2, 0.4, 0.95])

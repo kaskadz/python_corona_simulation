@@ -140,6 +140,8 @@ def update_randoms(population, pop_size, speed=0.01, heading_update_chance=0.02,
     return population
 
 def age_to_speed_multiplier(ages):
+    if len(ages) == 0:
+        return 1
     max_age = max(ages)
     return (max_age - ages) / max_age + 0.5
 
