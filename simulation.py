@@ -16,6 +16,7 @@ keep_at_destination, reset_destinations
 from population import initialize_population, initialize_destination_matrix,\
 set_destination_bounds, save_data, save_population, Population_trackers
 from visualiser import build_fig, draw_tstep, set_style, plot_sir
+from testing import test_population
 
 #set seed for reproducibility
 #np.random.seed(100)
@@ -34,6 +35,8 @@ class Simulation():
 
         #initalise destinations vector
         self.destinations = initialize_destination_matrix(self.Config.pop_size, 1)
+        self.total_tests = 0
+        self.total_positive = 0
 
 
     def reinitialise(self):
@@ -110,12 +113,18 @@ class Simulation():
         self.population = update_positions(self.population)
 
         #find new infections
-        self.population, self.destinations = infect(self.population, self.Config, self.frame, 
+        self.population = infect(self.population, self.Config, self.frame)
+        
+        #test
+        positive, number_of_tests = test_population(self.population, self.Config, self.frame,
                                                     send_to_location = self.Config.self_isolate, 
                                                     location_bounds = self.Config.isolation_bounds,  
                                                     destinations = self.destinations, 
                                                     location_no = 1, 
                                                     location_odds = self.Config.self_isolate_proportion)
+
+        self.total_positive += positive
+        self.total_tests += number_of_tests
 
         #recover and die
         self.population = recover_or_die(self.population, self.frame, self.Config)
@@ -206,6 +215,7 @@ class Simulation():
             print('total infected: %i' % total_infected)
             print('total infectious: %i' % total_infectious)
             print('total unaffected: %i' % total_unaffected)
+            print('total tests (pos/total): %i/%i' % (self.total_positive, self.total_tests))
         else:
             return {
                 'timesteps': total_timesteps,

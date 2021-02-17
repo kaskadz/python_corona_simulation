@@ -12,7 +12,7 @@ class Configuration():
     def __init__(self, *args, **kwargs):
         #simulation variables
         self.print_summary = kwargs.get('print_sum', True)
-        self.verbose = kwargs.get('verbose', False) #whether to print infections, recoveries and fatalities to the terminal
+        self.verbose = kwargs.get('verbose', True) #whether to print infections, recoveries and fatalities to the terminal
         self.quiet = kwargs.get('quiet', True)
         self.simulation_steps = kwargs.get('simulation_steps', 10000) #total simulation steps performed
         self.tstep = kwargs.get('tstep', 0) #current simulation timestep
@@ -93,14 +93,16 @@ class Configuration():
         #self isolation variables
         self.self_isolate_proportion = kwargs.get('self_isolate_proportion', 0.6) # proportion of infected who will self-isolate
         self.isolation_bounds = kwargs.get('isolation_bounds', [0.02, 0.02, 0.1, 0.98])
-        self.self_isolate_severity_proportion = kwargs.get('self_isolate_severity_proportion', [0.0, 0.2, 0.5]) # proprtions of infected who will self-isolate based on severity of symptoms, even without test
+        self.self_isolate_severity_proportion = kwargs.get('self_isolate_severity_proportion', [0.0, 0.2, 0.5]) # proprtions of infected who will self-isolate based solely on severity of symptoms (even without test)
         
         #lockdown variables
         self.lockdown_percentage = kwargs.get('lockdown_percentage', 0.1) 
         self.lockdown_vector = kwargs.get('lockdown_vector', [])
 
         #testing variables
-        self.test_chances = kwargs.get('test_chances', [0.2, 0.4, 0.95])
+        self.test_chances_healthy = kwargs.get('test_chances_healthy', 0.01)
+        self.test_chances = kwargs.get('test_chances', [0.05, 0.3, 0.9])
+        self.test_proportion_to_start = kwargs.get('test_proportion_to_start', 0.05) # proportion of infected population to start testing, without this parameter the disease often stops at case 1
         
     def get_palette(self):
         '''returns appropriate color palette

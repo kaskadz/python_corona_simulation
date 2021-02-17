@@ -36,7 +36,7 @@ def initialize_population(Config: Configuration,
     13 : wander_range_x : wander ranges on x axis for those who are confined to a location
     14 : wander_range_y : wander ranges on y axis for those who are confined to a location
     15 : symptoms severity (0=asymptomatic, 1=mild, 2=severe)
-    16 : tested (1 if tested in current state, else 0)
+    16 : tested (1 if tested in sick state, else 0)
     17 : wearing a mask
 
     Keyword arguments
