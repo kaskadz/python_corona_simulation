@@ -38,6 +38,7 @@ def initialize_population(Config: Configuration,
     15 : symptoms severity (0=asymptomatic, 1=mild, 2=severe)
     16 : tested (1 if tested in sick state, else 0)
     17 : wearing a mask
+    18 : target symptoms severity (0=asymptomatic, 1=mild, 2=severe)
 
     Keyword arguments
     -----------------
@@ -52,7 +53,7 @@ def initialize_population(Config: Configuration,
     '''
 
     #initialize population matrix
-    population = np.zeros((Config.pop_size, 18))
+    population = np.zeros((Config.pop_size, 19))
 
     #initalize unique IDs
     population[:,0] = [x for x in range(Config.pop_size)]
@@ -83,6 +84,9 @@ def initialize_population(Config: Configuration,
 
     #build recovery_vector
     population[:,9] = np.random.normal(loc = 0.5, scale = 0.5 / 3, size=(Config.pop_size,))
+
+    #initialize current symptoms
+    population[:,15] = np.full((Config.pop_size,), -1)
 
     #initialize masks
     population[:,17] = np.random.uniform(size=(Config.pop_size,)) < Config.proportion_wearing_masks

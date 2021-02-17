@@ -173,7 +173,7 @@ class Simulation():
             self.population[0][6] = 1
             self.population[0][8] = 50
             self.population[0][10] = 1
-            self.population[0][15] = 2
+            self.population[0][18] = 2
 
 
     def run(self):

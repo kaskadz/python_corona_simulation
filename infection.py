@@ -109,7 +109,7 @@ def infect(population, Config, frame):
     '''
 
     #mark those already infected first
-    infected_previous_step = population[population[:,6] == 1]
+    infected_previous_step = population[np.logical_and(population[:,6] == 1, population[:,15] != -1)]
     healthy_previous_step = population[population[:,6] == 0]
 
     new_infections = []
@@ -133,7 +133,7 @@ def infect(population, Config, frame):
                 #roll die to see if healthy person will be infected
                 if np.random.random() < infection_chance_patient * infection_chance_idx * severity_infection_chance_multiplier(Config.severity_infection_chances, patient[15]):
                     population[idx][6] = 1
-                    population[idx][15] = severity = choose_severity(population[idx][7], Config.age_dependent_risk)
+                    population[idx][18] = choose_severity(population[idx][7], Config.age_dependent_risk)
                     population[idx][8] = frame
                     new_infections.append(idx)
 
@@ -163,7 +163,7 @@ def infect(population, Config, frame):
                     if np.random.random() < (infection_chance_person * infection_chance_other * sum(severity_infection_chance_multiplier(Config.severity_infection_chances, population[np.int32(infected),15]))):
                         #roll die to see if healthy person will be infected
                         population[np.int32(person[0])][6] = 1
-                        population[np.int32(person[0])][15] = severity = choose_severity(person[7], Config.age_dependent_risk)
+                        population[np.int32(person[0])][18] = choose_severity(person[7], Config.age_dependent_risk)
                         population[np.int32(person[0])][8] = frame
                         new_infections.append(np.int32(person[0]))
 
@@ -245,6 +245,12 @@ def recover_or_die(population, frame, Config):
 
     #define vector of how long everyone has been sick
     illness_duration_vector = frame - infected_people[:,8]
+
+    #update severity
+    can_progress = np.less(infected_people[:,15], infected_people[:,18])
+    is_progression_step = np.sum(np.tile(illness_duration_vector, (3,1)).T == Config.infection_progression_duration, axis=1) == 1
+    to_progress = np.logical_and(is_progression_step, can_progress)
+    infected_people[:,15][to_progress] += 1
     
     recovery_odds_vector = (illness_duration_vector - Config.recovery_duration[0]) / np.ptp(Config.recovery_duration)
     recovery_odds_vector = np.clip(recovery_odds_vector, a_min = 0, a_max = None)

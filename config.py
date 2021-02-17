@@ -12,7 +12,7 @@ class Configuration():
     def __init__(self, *args, **kwargs):
         #simulation variables
         self.print_summary = kwargs.get('print_sum', True)
-        self.verbose = kwargs.get('verbose', True) #whether to print infections, recoveries and fatalities to the terminal
+        self.verbose = kwargs.get('verbose', False) #whether to print infections, recoveries and fatalities to the terminal
         self.quiet = kwargs.get('quiet', True)
         self.simulation_steps = kwargs.get('simulation_steps', 10000) #total simulation steps performed
         self.tstep = kwargs.get('tstep', 0) #current simulation timestep
@@ -21,7 +21,7 @@ class Configuration():
         self.save_pop_freq = kwargs.get('save_pop_freq', 10) #population data will be saved every 'n' timesteps. Default: 10
         self.save_pop_folder = kwargs.get('save_pop_folder', 'pop_data/') #folder to write population timestep data to
         self.endif_no_infections = kwargs.get('endif_no_infections', True) #whether to stop simulation if no infections remain
-        self.world_size = kwargs.get('world_size', [1, 1]) #x and y sizes of the world
+        self.world_size = kwargs.get('world_size', [2, 1]) #x and y sizes of the world
 
 
         #scenario flags
@@ -50,7 +50,7 @@ class Configuration():
         self.ybounds = kwargs.get('ybounds', [self.y_plot[0] + 0.02, self.y_plot[1] - 0.02])    
     
         #population variables
-        self.pop_size = kwargs.get('pop_size', 1000)
+        self.pop_size = kwargs.get('pop_size', 2000)
         self.mean_age = kwargs.get('mean_age', 45)
         self.max_age = kwargs.get('max_age', 105)
         self.std_age = kwargs.get('std_age', (self.max_age - self.mean_age) / 3)
@@ -75,13 +75,14 @@ class Configuration():
         self.wander_factor_dest = kwargs.get('wander_factor_dest', 1.5) #area around destination
 
         #infection variables
-        self.infection_range = kwargs.get('infection_range', 0.02) #range surrounding sick patient that infections can take place
+        self.infection_range = kwargs.get('infection_range', 0.04) #range surrounding sick patient that infections can take place
         self.infection_chance = kwargs.get('infection_chance', 0.25) #chance that an infection spreads from and to agent each tick (final chance is a product of these values for both agents)
         self.infection_chance_with_mask = kwargs.get('infection_chance_with_mask', 0.1)
-        self.proportion_wearing_masks = kwargs.get('proportion_wearing_masks', 0.8) # proportion of people wearing masks
+        self.proportion_wearing_masks = kwargs.get('proportion_wearing_masks', 0.5) # proportion of people wearing masks
         self.recovery_duration = kwargs.get('recovery_duration', (200, 500)) #how many ticks it may take to recover from the illness
         self.mortality_chance = kwargs.get('mortality_chance', 0.5) #global baseline chance of dying from the disease (if symptoms are severe)
         self.severity_infection_chances = kwargs.get('severity_infection_chances', [0.5, 1, 2])
+        self.infection_progression_duration = kwargs.get('infection_progression_duration', [5, 20, 50]) # how many ticks to progress to each severity level
 
         #healthcare variables
         self.healthcare_capacity = kwargs.get('healthcare_capacity', 50) #capacity of the healthcare system
