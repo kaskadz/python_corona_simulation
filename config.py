@@ -102,7 +102,7 @@ class Configuration():
 
         #testing variables
         self.test_chances_healthy = kwargs.get('test_chances_healthy', 0.01)
-        self.test_chances = kwargs.get('test_chances', [0.01, 0.3, 0.9])
+        self.test_chances = kwargs.get('test_chances', [0.01, 0.3, 0.8])
         self.test_proportion_to_start = kwargs.get('test_proportion_to_start', 0.05) # proportion of infected population to start testing, without this parameter the disease often stops at case 1
         self.min_ticks_between_tests = kwargs.get('min_ticks_between_tests', 10)
         

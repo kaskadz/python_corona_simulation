@@ -159,11 +159,12 @@ def infect(population, Config, frame):
                 
                 if len(infected) > 0:
                     for idx in infected:
+                        idx = int(idx)
                         infection_chance_idx = get_infection_chance(Config, population[idx])
                         #roll die to see if healthy person will be infected
-                        if np.random.random() < infection_chance_person * infection_chance_idx * severity_infection_chance_multiplier(Config.severity_infection_chances, person[15]):
+                        if np.random.random() < infection_chance_person * infection_chance_idx * severity_infection_chance_multiplier(Config.severity_infection_chances, population[idx,15]):
                             person[6] = 1
-                            person[18] = choose_severity(population[idx][7], Config.age_dependent_risk)
+                            person[18] = choose_severity(person[7], Config.age_dependent_risk)
                             person[8] = frame
                             new_infections.append(person[0])
 
