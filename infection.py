@@ -109,7 +109,7 @@ def infect(population, Config, frame):
     '''
 
     #mark those already infected first
-    infected_previous_step = population[np.logical_and(population[:,6] == 1, population[:,15] != -1)]
+    infected_previous_step = population[population[:,6] == 1]
     healthy_previous_step = population[population[:,6] == 0]
 
     new_infections = []
@@ -158,14 +158,14 @@ def infect(population, Config, frame):
                                          infected_previous_step = infected_previous_step)
                 
                 if len(infected) > 0:
-                    # use simplified formula for others
-                    infection_chance_other = Config.infection_chance_with_mask if np.random.random() < Config.proportion_wearing_masks else Config.infection_chance
-                    if np.random.random() < (infection_chance_person * infection_chance_other * sum(severity_infection_chance_multiplier(Config.severity_infection_chances, population[np.int32(infected),15]))):
+                    for idx in infected:
+                        infection_chance_idx = get_infection_chance(Config, population[idx])
                         #roll die to see if healthy person will be infected
-                        population[np.int32(person[0])][6] = 1
-                        population[np.int32(person[0])][18] = choose_severity(person[7], Config.age_dependent_risk)
-                        population[np.int32(person[0])][8] = frame
-                        new_infections.append(np.int32(person[0]))
+                        if np.random.random() < infection_chance_person * infection_chance_idx * severity_infection_chance_multiplier(Config.severity_infection_chances, person[15]):
+                            person[6] = 1
+                            person[18] = choose_severity(population[idx][7], Config.age_dependent_risk)
+                            person[8] = frame
+                            new_infections.append(person[0])
 
     if len(new_infections) > 0 and Config.verbose:
         print('at timestep %i these people got sick: %s' %(frame, new_infections))
@@ -177,7 +177,8 @@ def get_infection_chance(Config, agent):
     return Config.infection_chance_with_mask if is_wearing_mask else Config.infection_chance
 
 def severity_infection_chance_multiplier(severity_infection_chances, severity):
-    return np.array(severity_infection_chances)[np.int32(severity)]
+    s = np.array(severity, dtype=np.int32)
+    return np.sum(np.array(severity_infection_chances)[s[s != -1]])
 
 def choose_severity(age, age_dependent_risk):
     # todo use real data
