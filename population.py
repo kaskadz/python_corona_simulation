@@ -36,7 +36,7 @@ def initialize_population(Config: Configuration,
     13 : wander_range_x : wander ranges on x axis for those who are confined to a location
     14 : wander_range_y : wander ranges on y axis for those who are confined to a location
     15 : symptoms severity (0=asymptomatic, 1=mild, 2=severe)
-    16 : tested (1 if tested in sick state, else 0)
+    16 : ticks since tested
     17 : wearing a mask
     18 : target symptoms severity (0=asymptomatic, 1=mild, 2=severe)
 
@@ -87,6 +87,9 @@ def initialize_population(Config: Configuration,
 
     #initialize current symptoms
     population[:,15] = np.full((Config.pop_size,), -1)
+
+    #initialize ticks since tested
+    population[:,16] = np.full((Config.pop_size,), np.Inf)
 
     #initialize masks
     population[:,17] = np.random.uniform(size=(Config.pop_size,)) < Config.proportion_wearing_masks

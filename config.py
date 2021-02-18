@@ -12,7 +12,7 @@ class Configuration():
     def __init__(self, *args, **kwargs):
         #simulation variables
         self.print_summary = kwargs.get('print_sum', True)
-        self.verbose = kwargs.get('verbose', False) #whether to print infections, recoveries and fatalities to the terminal
+        self.verbose = kwargs.get('verbose', True) #whether to print infections, recoveries and fatalities to the terminal
         self.quiet = kwargs.get('quiet', True)
         self.simulation_steps = kwargs.get('simulation_steps', 10000) #total simulation steps performed
         self.tstep = kwargs.get('tstep', 0) #current simulation timestep
@@ -32,7 +32,7 @@ class Configuration():
         self.lockdown_compliance = kwargs.get('lockdown_compliance', 0.95) #fraction of the population that will obey the lockdown        
         
         #visualisation variables
-        self.visualise = kwargs.get('visualise', True) #whether to visualise the simulation 
+        self.visualise = kwargs.get('visualise', False) #whether to visualise the simulation 
         self.plot_mode = kwargs.get('plot_mode', 'sir') #default or sir
         #size of the simulated world in coordinates
         self.x_plot = kwargs.get('x_plot', [0, self.world_size[0]])
@@ -104,6 +104,7 @@ class Configuration():
         self.test_chances_healthy = kwargs.get('test_chances_healthy', 0.01)
         self.test_chances = kwargs.get('test_chances', [0.01, 0.3, 0.9])
         self.test_proportion_to_start = kwargs.get('test_proportion_to_start', 0.05) # proportion of infected population to start testing, without this parameter the disease often stops at case 1
+        self.min_ticks_between_tests = kwargs.get('min_ticks_between_tests', 10)
         
     def get_palette(self):
         '''returns appropriate color palette
