@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     if params.step in ['all', 'sim']:
         print('Generating parameter sets')
-        param_values = saltelli.sample(problem, 100, calc_second_order=False)
+        param_values = saltelli.sample(problem, 1000, calc_second_order=True)
 
         inputs = param_values_to_inputs(param_values)
 
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         df = pd.read_csv(get_prefixed_filename(experiment_name, 'results.csv'))
         for rv in tqdm(iterable=result_variables, unit='variable', desc='Computing sensitivity'):
             Y = df[f'r_{rv}'].values
-            Si = sobol.analyze(problem, Y, calc_second_order=False)
+            Si = sobol.analyze(problem, Y, calc_second_order=True)
             sdf = pd.concat(Si.to_df(), axis=1)
             sdf.index.name = 'parameter'
             sdf.to_csv(get_prefixed_filename(experiment_name, f'{rv}_results.csv'))
