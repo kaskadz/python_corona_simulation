@@ -26,7 +26,7 @@ def test_population(population, Config, frame, send_to_location=False,
                 agent[16] = 1
         if severity == 2 and len(population[population[:,10] == 1]) <= Config.healthcare_capacity:
             agent[10] = 1
-        if send_to_location and np.random.uniform() <= (tested + Config.self_isolate_severity_proportion[severity]) * location_odds:
+        if is_sick and send_to_location and np.random.uniform() <= (tested + Config.self_isolate_severity_proportion[severity]) * location_odds:
             population[idx], destinations[idx] = go_to_location(agent,
                                                                 destinations[idx],
                                                                 location_bounds, 
