@@ -35,13 +35,13 @@ def find_nearby(population, infection_zone, traveling_infects=False,
 
     elif kind.lower() == 'infected':
         if traveling_infects:
-            indices = infected_previous_step[:,6][(infection_zone[0] < infected_previous_step[:,1]) & 
+            indices = infected_previous_step[:,0][(infection_zone[0] < infected_previous_step[:,1]) & 
                                                             (infected_previous_step[:,1] < infection_zone[2]) &
                                                             (infection_zone[1] < infected_previous_step [:,2]) & 
                                                             (infected_previous_step[:,2] < infection_zone[3]) &
                                                             (infected_previous_step[:,6] == 1)]
         else:
-            indices = infected_previous_step[:,6][(infection_zone[0] < infected_previous_step[:,1]) & 
+            indices = infected_previous_step[:,0][(infection_zone[0] < infected_previous_step[:,1]) & 
                                                             (infected_previous_step[:,1] < infection_zone[2]) &
                                                             (infection_zone[1] < infected_previous_step [:,2]) & 
                                                             (infected_previous_step[:,2] < infection_zone[3]) &
@@ -157,16 +157,17 @@ def infect(population, Config, frame):
                                          kind = 'infected',
                                          infected_previous_step = infected_previous_step)
                 
-                if len(infected) > 0:
-                    for idx in infected:
-                        idx = int(idx)
-                        infection_chance_idx = get_infection_chance(Config, population[idx])
-                        #roll die to see if healthy person will be infected
-                        if np.random.random() < infection_chance_person * infection_chance_idx * severity_infection_chance_multiplier(Config.severity_infection_chances, population[idx,15]):
-                            person[6] = 1
-                            person[18] = choose_severity(person[7], Config.age_dependent_risk)
-                            person[8] = frame
-                            new_infections.append(person[0])
+                for idx in infected:
+                    idx = int(idx)
+                    infection_chance_idx = get_infection_chance(Config, population[idx])
+                    #roll die to see if healthy person will be infected
+                    if np.random.random() < infection_chance_person * infection_chance_idx * severity_infection_chance_multiplier(Config.severity_infection_chances, population[idx,15]):
+                        person_idx = int(person[0])
+                        population[person_idx][6] = 1
+                        population[person_idx][18] = choose_severity(person[7], Config.age_dependent_risk)
+                        population[person_idx][8] = frame
+                        new_infections.append(person_idx)
+                        break
 
     if len(new_infections) > 0 and Config.verbose:
         print('at timestep %i these people got sick: %s' %(frame, new_infections))

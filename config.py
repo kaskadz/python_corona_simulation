@@ -13,7 +13,7 @@ class Configuration():
         #simulation variables
         self.run_id = kwargs.get('run_id', str(int(time.time())))
         self.print_summary = kwargs.get('print_sum', False)
-        self.verbose = kwargs.get('verbose', False) #whether to print infections, recoveries and fatalities to the terminal
+        self.verbose = kwargs.get('verbose', True) #whether to print infections, recoveries and fatalities to the terminal
         self.quiet = kwargs.get('quiet', True)
         self.simulation_steps = kwargs.get('simulation_steps', 10000) #total simulation steps performed
         self.tstep = kwargs.get('tstep', 0) #current simulation timestep
@@ -51,7 +51,7 @@ class Configuration():
         self.ybounds = kwargs.get('ybounds', [self.y_plot[0] + 0.02, self.y_plot[1] - 0.02])    
     
         #population variables
-        self.pop_size = kwargs.get('pop_size', 1000)
+        self.pop_size = kwargs.get('pop_size', 500)
         self.mean_age = kwargs.get('mean_age', 45)
         self.max_age = kwargs.get('max_age', 105)
         self.std_age = kwargs.get('std_age', (self.max_age - self.mean_age) / 3)
