@@ -11,7 +11,7 @@ class Configuration():
     def __init__(self, *args, **kwargs):
         #simulation variables
         self.print_summary = kwargs.get('print_sum', True)
-        self.verbose = kwargs.get('verbose', False) #whether to print infections, recoveries and fatalities to the terminal
+        self.verbose = kwargs.get('verbose', True) #whether to print infections, recoveries and fatalities to the terminal
         self.quiet = kwargs.get('quiet', True)
         self.simulation_steps = kwargs.get('simulation_steps', 10000) #total simulation steps performed
         self.tstep = kwargs.get('tstep', 0) #current simulation timestep
@@ -49,7 +49,7 @@ class Configuration():
         self.ybounds = kwargs.get('ybounds', [self.y_plot[0] + 0.02, self.y_plot[1] - 0.02])    
     
         #population variables
-        self.pop_size = kwargs.get('pop_size', 2000)
+        self.pop_size = kwargs.get('pop_size', 1000)
         self.mean_age = kwargs.get('mean_age', 45)
         self.max_age = kwargs.get('max_age', 105)
         self.std_age = kwargs.get('std_age', (self.max_age - self.mean_age) / 3)
@@ -74,7 +74,7 @@ class Configuration():
         self.wander_factor_dest = kwargs.get('wander_factor_dest', 1.5) #area around destination
 
         #infection variables
-        self.infection_range = kwargs.get('infection_range', 0.04) #range surrounding sick patient that infections can take place
+        self.infection_range = kwargs.get('infection_range', 0.05) #range surrounding sick patient that infections can take place
         self.infection_chance = kwargs.get('infection_chance', 0.25) #chance that an infection spreads from and to agent each tick (final chance is a product of these values for both agents)
         self.infection_chance_with_mask = kwargs.get('infection_chance_with_mask', 0.1)
         self.proportion_wearing_masks = kwargs.get('proportion_wearing_masks', 0.5) # proportion of people wearing masks
@@ -106,8 +106,9 @@ class Configuration():
 
         #testing variables
         self.test_chances_healthy = kwargs.get('test_chances_healthy', 0.01)
-        self.test_chances = kwargs.get('test_chances', [0.05, 0.3, 0.9])
+        self.test_chances = kwargs.get('test_chances', [0.01, 0.3, 0.8])
         self.test_proportion_to_start = kwargs.get('test_proportion_to_start', 0.05) # proportion of infected population to start testing, without this parameter the disease often stops at case 1
+        self.min_ticks_between_tests = kwargs.get('min_ticks_between_tests', 10)
         
     def get_palette(self):
         '''returns appropriate color palette
