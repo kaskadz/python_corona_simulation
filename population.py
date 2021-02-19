@@ -7,6 +7,7 @@ from glob import glob
 import os
 
 import numpy as np
+import pandas as pd
 
 from motion import get_motion_parameters
 from utils import check_folder
@@ -36,7 +37,7 @@ def initialize_population(Config: Configuration,
     13 : wander_range_x : wander ranges on x axis for those who are confined to a location
     14 : wander_range_y : wander ranges on y axis for those who are confined to a location
     15 : symptoms severity (0=asymptomatic, 1=mild, 2=severe)
-    16 : ticks since tested
+    16 : tested status (-1=not tested, 0=tested negative , 1=tested positive)
     17 : wearing a mask
     18 : target symptoms severity (0=asymptomatic, 1=mild, 2=severe)
 
@@ -89,7 +90,7 @@ def initialize_population(Config: Configuration,
     population[:,15] = np.full((Config.pop_size,), -1)
 
     #initialize ticks since tested
-    population[:,16] = np.full((Config.pop_size,), np.Inf)
+    population[:,16] = np.full((Config.pop_size,), -1)
 
     #initialize masks
     population[:,17] = np.random.uniform(size=(Config.pop_size,)) < Config.proportion_wearing_masks
@@ -221,22 +222,24 @@ class Population_trackers():
 
     TODO: track age cohorts here as well
     '''
-    def __init__(self):
+    def __init__(self, simulation_steps):
         self.susceptible = []
         self.infectious = []
         self.recovered = []
         self.fatalities = []
+        self.infected_known = []
 
         #PLACEHOLDER - whether recovered individual can be reinfected
         self.reinfect = False 
 
-    def update_counts(self, population):
+    def update_counts(self, population, frame):
         '''docstring
         '''
         pop_size = population.shape[0]
-        self.infectious.append(len(population[population[:,6] == 1]))
-        self.recovered.append(len(population[population[:,6] == 2]))
-        self.fatalities.append(len(population[population[:,6] == 3]))
+        self.infectious.append(sum(population[:,6] == 1))
+        self.recovered.append(sum(population[:,6] == 2))
+        self.fatalities.append(sum(population[:,6] == 3))
+        self.infected_known.append(sum((population[:,6] == 1) & (population[:,16] == 1)))
 
         if self.reinfect:
             self.susceptible.append(pop_size - (self.infectious[-1] +
@@ -245,3 +248,19 @@ class Population_trackers():
             self.susceptible.append(pop_size - (self.infectious[-1] +
                                                 self.recovered[-1] +
                                                 self.fatalities[-1]))
+
+    def save(self, run_id, output_path):
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+
+        path = f'{output_path}/r_{run_id}.csv'
+
+        df = pd.DataFrame(data={
+            'infected': self.infectious,
+            'recovered': self.recovered,
+            'fatalities': self.fatalities,
+            'infected_known': self.infected_known
+        })
+
+        df.to_csv(path)
+        print(f'saved results for run_id: {run_id}')
