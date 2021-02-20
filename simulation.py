@@ -36,6 +36,9 @@ class Simulation():
         #initalise destinations vector
         self.destinations = initialize_destination_matrix(self.Config.pop_size, 1)
         self.testing = False
+        self.positive = []
+        self.last_positive = None
+        self.last_number_of_tests = 0
 
 
     def reinitialise(self):
@@ -43,7 +46,7 @@ class Simulation():
         
         self.frame = 0
         self.population_init()
-        self.pop_tracker = Population_trackers()
+        self.pop_tracker = Population_trackers(self.Config.simulation_steps)
         self.destinations = initialize_destination_matrix(self.Config.pop_size, 1)
 
 
@@ -120,12 +123,14 @@ class Simulation():
             self.population[:,17] = np.random.uniform(size=(self.Config.pop_size,)) < self.Config.proportion_wearing_masks
 
         if self.testing:
-            positive, number_of_tests = test_population(self.population, self.Config, self.frame,
+            self.last_positive, self.last_number_of_tests = test_population(self.population, self.Config, self.frame, self.positive,
                                                     send_to_location = self.Config.self_isolate, 
                                                     location_bounds = self.Config.isolation_bounds,  
                                                     destinations = self.destinations, 
                                                     location_no = 1, 
                                                     location_odds = self.Config.self_isolate_proportion)
+            if self.last_positive is not None:
+                self.positive += [self.last_positive]
 
         #recover and die
         self.population = recover_or_die(self.population, self.frame, self.Config)
@@ -136,7 +141,7 @@ class Simulation():
         self.population[:,11][self.population[:,6] == 2] = 0
 
         #update population statistics
-        self.pop_tracker.update_counts(self.population, self.frame)
+        self.pop_tracker.update_counts(self.population, self.frame, self.last_positive, self.last_number_of_tests)
 
         #visualise
         if self.Config.visualise:

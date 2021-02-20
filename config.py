@@ -33,7 +33,7 @@ class Configuration():
         self.lockdown_compliance = kwargs.get('lockdown_compliance', 0.95) #fraction of the population that will obey the lockdown        
         
         #visualisation variables
-        self.visualise = kwargs.get('visualise', True) #whether to visualise the simulation 
+        self.visualise = kwargs.get('visualise', False) #whether to visualise the simulation 
         self.plot_mode = kwargs.get('plot_mode', 'sir') #default or sir
         #size of the simulated world in coordinates
         self.x_plot = kwargs.get('x_plot', [0, self.world_size[0]])
@@ -107,10 +107,11 @@ class Configuration():
             )
 
         #testing variables
-        self.test_chances_healthy = kwargs.get('test_chances_healthy', 0.005)
-        self.test_chances = kwargs.get('test_chances', [0.01, 0.3, 0.8])
         self.test_proportion_to_start = kwargs.get('test_proportion_to_start', 0.05) # proportion of infected population to start testing, without this parameter the disease often stops at case 1
         self.min_ticks_between_tests = kwargs.get('min_ticks_between_tests', 10)
+        self.min_tests_daily_proportion = kwargs.get('min_tests_daily_proportion', 0.005)
+        self.max_tests_daily_proportion = kwargs.get('max_tests_daily_proportion', 0.05)
+        self.desired_positive_proportion = kwargs.get('desired_positive_proportion', 0.1)
         
     def get_palette(self):
         '''returns appropriate color palette
