@@ -29,7 +29,7 @@ def test_population(population, Config, frame, send_to_location=False,
                 population[idx,16] = 0
         if severity == 2 and len(population[population[:,10] == 1]) <= Config.healthcare_capacity:
             population[idx,10] = 1
-        if is_sick and severity != -1 and send_to_location and np.random.uniform() <= (should_test + Config.self_isolate_severity_proportion[severity]) * location_odds:
+        if is_sick and severity != -1 and send_to_location and np.random.uniform() <= max(should_test + Config.self_isolate_severity_proportion[severity], 1) * location_odds:
             population[idx], destinations[idx] = go_to_location(population[idx,:],
                                                                 destinations[idx],
                                                                 location_bounds, 

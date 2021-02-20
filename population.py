@@ -93,7 +93,7 @@ def initialize_population(Config: Configuration,
     population[:,16] = np.full((Config.pop_size,), -1)
 
     #initialize masks
-    population[:,17] = np.random.uniform(size=(Config.pop_size,)) < Config.proportion_wearing_masks
+    population[:,17] = np.zeros((Config.pop_size,))
 
     return population
 
@@ -259,7 +259,8 @@ class Population_trackers():
             'infected': self.infectious,
             'recovered': self.recovered,
             'fatalities': self.fatalities,
-            'infected_known': self.infected_known
+            'infected_known': self.infected_known,
+            'susceptible': self.susceptible
         })
 
         df.to_csv(path)

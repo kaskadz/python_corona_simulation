@@ -12,8 +12,8 @@ class Configuration():
     def __init__(self, *args, **kwargs):
         #simulation variables
         self.run_id = kwargs.get('run_id', str(int(time.time())))
-        self.print_summary = kwargs.get('print_sum', False)
-        self.verbose = kwargs.get('verbose', True) #whether to print infections, recoveries and fatalities to the terminal
+        self.print_summary = kwargs.get('print_sum', True)
+        self.verbose = kwargs.get('verbose', False) #whether to print infections, recoveries and fatalities to the terminal
         self.quiet = kwargs.get('quiet', True)
         self.simulation_steps = kwargs.get('simulation_steps', 10000) #total simulation steps performed
         self.tstep = kwargs.get('tstep', 0) #current simulation timestep
@@ -22,7 +22,7 @@ class Configuration():
         self.save_pop_freq = kwargs.get('save_pop_freq', 10) #population data will be saved every 'n' timesteps. Default: 10
         self.save_pop_folder = kwargs.get('save_pop_folder', 'pop_data/') #folder to write population timestep data to
         self.endif_no_infections = kwargs.get('endif_no_infections', True) #whether to stop simulation if no infections remain
-        self.world_size = kwargs.get('world_size', [2, 1]) #x and y sizes of the world
+        self.world_size = kwargs.get('world_size', [2, 2]) #x and y sizes of the world
 
 
         #scenario flags
@@ -51,15 +51,15 @@ class Configuration():
         self.ybounds = kwargs.get('ybounds', [self.y_plot[0] + 0.02, self.y_plot[1] - 0.02])    
     
         #population variables
-        self.pop_size = kwargs.get('pop_size', 500)
+        self.pop_size = kwargs.get('pop_size', 2000)
         self.mean_age = kwargs.get('mean_age', 45)
         self.max_age = kwargs.get('max_age', 105)
         self.std_age = kwargs.get('std_age', (self.max_age - self.mean_age) / 3)
-        self.custom_age_distribution = kwargs.get('custom_age_distribution', False)
+        self.custom_age_distribution = kwargs.get('custom_age_distribution', True)
         self.age_dependent_risk = kwargs.get('age_dependent_risk', True) #whether risk increases with age
         self.risk_age = kwargs.get('risk_age', 55) #age where mortality risk starts increasing
         self.critical_age = kwargs.get('critical_age', 75) #age at and beyond which mortality risk reaches maximum
-        self.critical_mortality_chance = kwargs.get('critical_mortality_chance', 0.5) #maximum mortality risk for older age
+        self.critical_mortality_chance = kwargs.get('critical_mortality_chance', 0.2) #maximum mortality risk for older age
         self.risk_increase = kwargs.get('risk_increase', 'quadratic') #whether risk between risk and critical age increases 'linear' or 'quadratic'
         
         #movement variables
@@ -77,25 +77,25 @@ class Configuration():
 
         #infection variables
         self.infection_range = kwargs.get('infection_range', 0.05) #range surrounding sick patient that infections can take place
-        self.infection_chance = kwargs.get('infection_chance', 0.25) #chance that an infection spreads from and to agent each tick (final chance is a product of these values for both agents)
+        self.infection_chance = kwargs.get('infection_chance', 0.4) #chance that an infection spreads from and to agent each tick (final chance is a product of these values for both agents)
         self.infection_chance_with_mask = kwargs.get('infection_chance_with_mask', 0.1)
         self.proportion_wearing_masks = kwargs.get('proportion_wearing_masks', 0.5) # proportion of people wearing masks
         self.recovery_duration = kwargs.get('recovery_duration', (200, 500)) #how many ticks it may take to recover from the illness
-        self.mortality_chance = kwargs.get('mortality_chance', 0.5) #global baseline chance of dying from the disease (if symptoms are severe)
+        self.mortality_chance = kwargs.get('mortality_chance', 0.2) #global baseline chance of dying from the disease (if symptoms are severe)
         self.severity_infection_chances = kwargs.get('severity_infection_chances', [0.5, 1, 2])
-        self.infection_progression_duration = kwargs.get('infection_progression_duration', [5, 20, 50]) # how many ticks to progress to each severity level
+        self.infection_progression_duration = kwargs.get('infection_progression_duration', [20, 70, 140]) # how many ticks to progress to each severity level
 
         #healthcare variables
-        self.healthcare_capacity = kwargs.get('healthcare_capacity', 50) #capacity of the healthcare system
+        self.healthcare_capacity = kwargs.get('healthcare_capacity', 100) #capacity of the healthcare system
         self.treatment_factor = kwargs.get('treatment_factor', 0.5) #when in treatment, affect risk by this factor
         self.no_treatment_factor = kwargs.get('no_treatment_factor', 3) #risk increase factor to use if healthcare system is full
         #risk parameters
         self.treatment_dependent_risk = kwargs.get('treatment_dependent_risk', True) #whether risk is affected by treatment
 
         #self isolation variables
-        self.self_isolate_proportion = kwargs.get('self_isolate_proportion', 0.6) # proportion of infected who will self-isolate
-        self.isolation_bounds = kwargs.get('isolation_bounds', [0.02, 0.02, 0.1, 0.98])
-        self.self_isolate_severity_proportion = kwargs.get('self_isolate_severity_proportion', [0.0, 0.2, 0.5]) # proprtions of infected who will self-isolate based solely on severity of symptoms (even without test)
+        self.self_isolate_proportion = kwargs.get('self_isolate_proportion', 0.7) # proportion of infected who will self-isolate
+        self.isolation_bounds = kwargs.get('isolation_bounds', [0.02, 0.02, 0.1, 1.98])
+        self.self_isolate_severity_proportion = kwargs.get('self_isolate_severity_proportion', [0.0, 0.2, 0.7]) # proprtions of infected who will self-isolate based solely on severity of symptoms (even without test)
         
         #lockdown variables
         self.lockdown_percentage = kwargs.get('lockdown_percentage', 0.1) 
@@ -107,7 +107,7 @@ class Configuration():
             )
 
         #testing variables
-        self.test_chances_healthy = kwargs.get('test_chances_healthy', 0.01)
+        self.test_chances_healthy = kwargs.get('test_chances_healthy', 0.005)
         self.test_chances = kwargs.get('test_chances', [0.01, 0.3, 0.8])
         self.test_proportion_to_start = kwargs.get('test_proportion_to_start', 0.05) # proportion of infected population to start testing, without this parameter the disease often stops at case 1
         self.min_ticks_between_tests = kwargs.get('min_ticks_between_tests', 10)

@@ -117,6 +117,7 @@ class Simulation():
         #test
         if len(self.population[self.population[:,6] == 1]) /  self.Config.pop_size >=  self.Config.test_proportion_to_start:
             self.testing = True
+            self.population[:,17] = np.random.uniform(size=(self.Config.pop_size,)) < self.Config.proportion_wearing_masks
 
         if self.testing:
             positive, number_of_tests = test_population(self.population, self.Config, self.frame,
@@ -167,13 +168,13 @@ class Simulation():
         The method is called after every simulation timestep.
         '''
 
-        if self.frame == 50:
+        if self.frame == 5:
             if not self.Config.quiet:
                 print('\ninfecting patient zero')
-            self.population[0][6] = 1
-            self.population[0][8] = 50
-            self.population[0][10] = 1
-            self.population[0][18] = 2
+            self.population[0:5,6] = 1
+            self.population[0:5,8] = 5
+            self.population[0:5,10] = 1
+            self.population[0:5,18] = 2
 
 
     def run(self):
@@ -215,8 +216,8 @@ class Simulation():
             print('total infected: %i' % total_infected)
             print('total infectious: %i' % total_infectious)
             print('total unaffected: %i' % total_unaffected)
-        else:
-            self.pop_tracker.save(self.Config.run_id, 'results')
+        
+        self.pop_tracker.save(self.Config.run_id, 'results')
 
 
     def plot_sir(self, size=(6,3), include_fatalities=False, 
