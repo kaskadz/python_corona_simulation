@@ -153,7 +153,7 @@ def infect(population, Config, frame):
                                          kind = 'infected')
                 else:
                     infected = find_nearby(population, infection_zone, 
-                                         traveling_infects = True,
+                                         traveling_infects = False,
                                          kind = 'infected',
                                          infected_previous_step = infected_previous_step)
                 
