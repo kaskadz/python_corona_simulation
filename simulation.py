@@ -31,12 +31,11 @@ class Simulation():
         #initialize default population
         self.population_init()
 
-        self.pop_tracker = Population_trackers()
+        self.pop_tracker = Population_trackers(self.Config.simulation_steps)
 
         #initalise destinations vector
         self.destinations = initialize_destination_matrix(self.Config.pop_size, 1)
-        self.total_tests = 0
-        self.total_positive = 0
+        self.testing = False
 
 
     def reinitialise(self):
@@ -116,15 +115,16 @@ class Simulation():
         self.population = infect(self.population, self.Config, self.frame)
         
         #test
-        positive, number_of_tests = test_population(self.population, self.Config, self.frame,
+        if len(self.population[self.population[:,6] == 1]) /  self.Config.pop_size >=  self.Config.test_proportion_to_start:
+            self.testing = True
+
+        if self.testing:
+            positive, number_of_tests = test_population(self.population, self.Config, self.frame,
                                                     send_to_location = self.Config.self_isolate, 
                                                     location_bounds = self.Config.isolation_bounds,  
                                                     destinations = self.destinations, 
                                                     location_no = 1, 
                                                     location_odds = self.Config.self_isolate_proportion)
-
-        self.total_positive += positive
-        self.total_tests += number_of_tests
 
         #recover and die
         self.population = recover_or_die(self.population, self.frame, self.Config)
@@ -135,7 +135,7 @@ class Simulation():
         self.population[:,11][self.population[:,6] == 2] = 0
 
         #update population statistics
-        self.pop_tracker.update_counts(self.population)
+        self.pop_tracker.update_counts(self.population, self.frame)
 
         #visualise
         if self.Config.visualise:
@@ -215,16 +215,8 @@ class Simulation():
             print('total infected: %i' % total_infected)
             print('total infectious: %i' % total_infectious)
             print('total unaffected: %i' % total_unaffected)
-            print('total tests (pos/total): %i/%i' % (self.total_positive, self.total_tests))
         else:
-            return {
-                'timesteps': total_timesteps,
-                'dead': total_dead,
-                'recovered': total_recovered,
-                'infected': total_infected,
-                'infectious': total_infectious,
-                'unaffected': total_unaffected
-            }
+            self.pop_tracker.save(self.Config.run_id, 'results')
 
 
     def plot_sir(self, size=(6,3), include_fatalities=False, 

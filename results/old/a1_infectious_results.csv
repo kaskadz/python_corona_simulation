@@ -1,0 +1,9 @@
+parameter,ST,ST_conf,S1,S1_conf
+mean_age,,,,
+max_age,,,,
+proportion_wearing_masks,,,,
+healthcare_capacity,,,,
+self_isolate_proportion,,,,
+lockdown,,,,
+lockdown_percentage,,,,
+lockdown_compliance,,,,
