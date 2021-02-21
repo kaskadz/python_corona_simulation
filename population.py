@@ -279,4 +279,4 @@ class Population_trackers():
         })
 
         df.to_csv(path)
-        print(f'saved results for run_id: {run_id}')
+        # print(f'saved results for run_id: {run_id}')
