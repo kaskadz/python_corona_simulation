@@ -228,11 +228,16 @@ class Population_trackers():
         self.recovered = []
         self.fatalities = []
         self.infected_known = []
+        self.severity0 = []
+        self.severity1 = []
+        self.severity2 = []
+        self.positive = []
+        self.number_of_tests = []
 
         #PLACEHOLDER - whether recovered individual can be reinfected
         self.reinfect = False 
 
-    def update_counts(self, population, frame):
+    def update_counts(self, population, frame, positive, number_of_tests):
         '''docstring
         '''
         pop_size = population.shape[0]
@@ -240,6 +245,11 @@ class Population_trackers():
         self.recovered.append(sum(population[:,6] == 2))
         self.fatalities.append(sum(population[:,6] == 3))
         self.infected_known.append(sum((population[:,6] == 1) & (population[:,16] == 1)))
+        self.severity0.append(sum(population[:,15] == 0))
+        self.severity1.append(sum(population[:,15] == 1))
+        self.severity2.append(sum(population[:,15] == 2))
+        self.positive.append(positive)
+        self.number_of_tests.append(number_of_tests)
 
         if self.reinfect:
             self.susceptible.append(pop_size - (self.infectious[-1] +
@@ -260,8 +270,13 @@ class Population_trackers():
             'recovered': self.recovered,
             'fatalities': self.fatalities,
             'infected_known': self.infected_known,
-            'susceptible': self.susceptible
+            'susceptible': self.susceptible,
+            'severity0': self.severity0,
+            'severity1': self.severity1,
+            'severity2': self.severity2,
+            'positive': self.positive,
+            'number_of_tests': self.number_of_tests
         })
 
         df.to_csv(path)
-        print(f'saved results for run_id: {run_id}')
+        # print(f'saved results for run_id: {run_id}')
